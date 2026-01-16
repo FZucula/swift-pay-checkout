@@ -10,7 +10,6 @@ import { ArrowLeft, Shield, Loader2, CheckCircle2, AlertCircle, X } from "lucide
 import { useToast } from "@/hooks/use-toast";
 import { processMpesaPayment } from "@/services/mpesaService";
 import { initiateMastercardPayment } from "@/services/mastercardService";
-import { notifyPaymentSuccess } from "@/services/notificationService";
 import logo from "@/assets/logo-full.png";
 
 type PaymentMethod = "mpesa" | "mastercard";
@@ -152,11 +151,6 @@ const Index = () => {
 
       // Configurar e mostrar o Checkout do Mastercard (popup)
       if (window.Checkout && result.checkout_config) {
-        // Salvar dados do pagamento no sessionStorage para usar no callback
-        sessionStorage.setItem("purchaserName", purchaserName || "Cliente");
-        sessionStorage.setItem("purchaserEmail", purchaserEmail || "email@exemplo.com");
-        sessionStorage.setItem("paymentAmount", finalPrice.toString());
-        
         window.Checkout.configure({
           merchant: result.checkout_config.merchant,
           session: {
@@ -199,16 +193,6 @@ const Index = () => {
         toast({
           title: "Pagamento Iniciado! 🎉",
           description: `Verifique o seu telefone (${phoneNumber}) para confirmar o pagamento com o seu PIN.`,
-        });
-
-        // Enviar notificação de pagamento
-        await notifyPaymentSuccess({
-          purchaserName: purchaserName || "Cliente",
-          purchaserEmail: purchaserEmail || phoneNumber,
-          amount: finalPrice,
-          paymentMethod: "mpesa",
-          transactionId: result.transactionId,
-          timestamp: new Date().toISOString()
         });
 
         // Limpar formulário após sucesso

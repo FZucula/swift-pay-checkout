@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, AlertCircle, Loader2, Home } from "lucide-react";
-import { notifyPaymentSuccess } from "@/services/notificationService";
 import logo from "@/assets/logo-full.png";
 
 type ResultStatus = "success" | "pending" | "failed" | "cancelled" | "error" | "loading";
@@ -31,19 +30,6 @@ const MastercardCallback = () => {
         setStatus("success");
         setMessage("Pagamento Processado com Sucesso!");
         setDetails("Sua inscrição foi ativada. Você receberá uma confirmação por email.");
-        
-        // Enviar notificação de pagamento
-        const purchaserName = sessionStorage.getItem("purchaserName") || "Cliente";
-        const purchaserEmail = sessionStorage.getItem("purchaserEmail") || "email@exemplo.com";
-        const amount = sessionStorage.getItem("paymentAmount") || "0";
-        
-        notifyPaymentSuccess({
-          purchaserName,
-          purchaserEmail,
-          amount: parseFloat(amount),
-          paymentMethod: "mastercard",
-          timestamp: new Date().toISOString()
-        });
         
         // Redirecionar para home após 3 segundos
         setTimeout(() => {
