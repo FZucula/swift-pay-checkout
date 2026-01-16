@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,6 +88,12 @@ const Login = () => {
                             {loading ? "Entrando..." : "Entrar"}
                         </Button>
                     </form>
+
+                    <div className="mt-4 flex flex-col space-y-2 text-center text-sm">
+                        <Link to="/forgot-password" className="text-primary hover:underline">
+                            Esqueceu a senha?
+                        </Link>
+                    </div>
 
                     <div className="mt-6 pt-6 border-t">
                         <div className="flex items-center justify-between mb-4">

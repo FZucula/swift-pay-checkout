@@ -11,10 +11,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
     const [payments, setPayments] = useState<PaymentDataWithId[]>([]);
     const [loading, setLoading] = useState(true);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPayments = async () => {
@@ -26,6 +32,11 @@ const Admin = () => {
         fetchPayments();
     }, []);
 
+    const handleLogout = async () => {
+        await logout();
+        navigate("/login");
+    };
+
     if (loading) {
         return <div className="p-8">Loading...</div>;
     }
@@ -33,8 +44,12 @@ const Admin = () => {
     return (
         <div className="container mx-auto p-8">
             <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Payment History</CardTitle>
+                    <Button variant="outline" size="sm" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sair
+                    </Button>
                 </CardHeader>
                 <CardContent>
                     <Table>
