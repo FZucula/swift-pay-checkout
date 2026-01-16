@@ -3,20 +3,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Smartphone, AlertCircle, Check } from "lucide-react";
 
-interface MpesaFormProps {
+interface EmolaFormProps {
   phoneNumber: string;
   onPhoneChange: (value: string) => void;
 }
 
-export const MpesaForm = ({ phoneNumber, onPhoneChange }: MpesaFormProps) => {
+export const EmolaForm = ({ phoneNumber, onPhoneChange }: EmolaFormProps) => {
   const [touched, setTouched] = useState(false);
 
   const validatePhone = (phone: string) => {
     if (phone.length === 0) return { valid: false, message: "" };
     if (phone.length !== 9) return { valid: false, message: "O número deve ter exactamente 9 dígitos" };
-    if (!phone.startsWith("84") && !phone.startsWith("85")) {
-      return { valid: false, message: "O número deve começar com 84 ou 85" };
-    }
     return { valid: true, message: "Número válido" };
   };
 
@@ -36,7 +33,7 @@ export const MpesaForm = ({ phoneNumber, onPhoneChange }: MpesaFormProps) => {
           <Smartphone className="w-5 h-5 text-primary-foreground" />
         </div>
         <div>
-          <h3 className="font-semibold text-lg">Pagamento via M-Pesa</h3>
+          <h3 className="font-semibold text-lg">Pagamento via Emola</h3>
           <p className="text-sm text-muted-foreground">Introduza o seu número de telefone</p>
         </div>
       </div>
@@ -52,7 +49,7 @@ export const MpesaForm = ({ phoneNumber, onPhoneChange }: MpesaFormProps) => {
           <Input
             id="phone"
             type="tel"
-            placeholder="84/85 XXX XXXX"
+            placeholder="8X XXX XXXX"
             value={phoneNumber}
             onChange={handleChange}
             onBlur={() => setTouched(true)}
@@ -85,16 +82,10 @@ export const MpesaForm = ({ phoneNumber, onPhoneChange }: MpesaFormProps) => {
         )}
       </div>
 
-      <div className="bg-amber-50 rounded-lg p-4 mt-4 border border-amber-200">
-        <p className="text-sm text-amber-900 font-medium mb-2">
-          💡 Como usar M-Pesa:
+      <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border">
+        <p className="text-sm text-muted-foreground">
+          <strong>Instruções:</strong> Você receberá uma notificação no seu telemóvel. Confirme o pagamento inserindo o seu PIN.
         </p>
-        <ul className="text-sm text-amber-900 space-y-1 ml-4 list-decimal">
-          <li>Introduza o número registado em M-Pesa</li>
-          <li>Recebará uma notificação no seu telemóvel</li>
-          <li>Digite o seu PIN M-Pesa para confirmar</li>
-          <li>Pagamento concluído em segundos</li>
-        </ul>
       </div>
     </div>
   );

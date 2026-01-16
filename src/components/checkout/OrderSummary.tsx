@@ -14,7 +14,7 @@ export const OrderSummary = ({
   ],
   subtotal = 3500,
   tax = 560,
-  total = 4060 
+  total = 6950 
 }: OrderSummaryProps) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-MZ", {
