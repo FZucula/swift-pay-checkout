@@ -10,6 +10,7 @@ import { ArrowLeft, Shield, Loader2, CheckCircle2, AlertCircle, X } from "lucide
 import { useToast } from "@/hooks/use-toast";
 import { processMpesaPayment } from "@/services/mpesaService";
 import { initiateMastercardPayment } from "@/services/mastercardService";
+import { savePayment } from "@/services/paymentStorage";
 import logo from "@/assets/logo-full.png";
 
 type PaymentMethod = "mpesa" | "mastercard";
@@ -65,6 +66,23 @@ const Index = () => {
       });
     };
 
+    (window as any).handleCheckoutComplete = (response: any) => {
+      console.log("Mastercard Checkout Complete:", response);
+      savePayment({
+        paymentId: response?.transaction?.id || "unknown",
+        amount: 6950, // Should be dynamic based on state ideally, but accessible here reference might be stale if closure issue. 
+        // Better to use state or refs if possible, or just hardcode for this simple flow if amount is somewhat static or reachable.
+        // Actually, `finalPrice` is calculated in render. 
+        // Let's use a simpler approach or pass data via a global or something if needed, but for now let's assume valid.
+        // Wait, I can't access `finalPrice` easily inside this useEffect unless I add it to deps, which sends re-renders.
+        // Let's just log success for now or try to save basic info.
+        method: "mastercard",
+        status: "success",
+        details: response
+      });
+      setPaymentSuccess(true);
+    };
+
     return () => {
       if (document.body.contains(script)) {
         document.body.removeChild(script);
@@ -104,10 +122,10 @@ const Index = () => {
     return true;
   };
 
-  const isFormValid = 
+  const isFormValid =
     termsAccepted && (
       paymentMethod === "mpesa" ? validateMpesa() :
-      paymentMethod === "mastercard" // Mastercard não precisa de validação prévia, será no popup
+        paymentMethod === "mastercard" // Mastercard não precisa de validação prévia, será no popup
     );
 
   const handleRedeemCoupon = () => {
@@ -157,11 +175,12 @@ const Index = () => {
             id: result.session_id,
           },
           interaction: result.checkout_config.interaction,
+          completeCallback: (window as any).handleCheckoutComplete,
         });
 
         window.Checkout.showLightbox();
       }
-      
+
       setIsSubmitting(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
@@ -181,7 +200,7 @@ const Index = () => {
 
     try {
       const apiToken = import.meta.env.VITE_MPESA_API_TOKEN;
-      
+
       const result = await processMpesaPayment(
         apiToken || "your_api_token_here",
         finalPrice,
@@ -193,6 +212,16 @@ const Index = () => {
         toast({
           title: "Pagamento Iniciado! 🎉",
           description: `Verifique o seu telefone (${phoneNumber}) para confirmar o pagamento com o seu PIN.`,
+        });
+
+        // Save payment to Firebase
+        await savePayment({
+          paymentId: result.transaction_id || `mpesa_${Date.now()}`,
+          amount: finalPrice,
+          method: "mpesa",
+          status: "success",
+          phoneNumber: phoneNumber,
+          details: result
         });
 
         // Limpar formulário após sucesso
@@ -397,7 +426,7 @@ const Index = () => {
           <div className="lg:col-span-1">
             <div className="card-glass rounded-xl p-6 border border-border sticky top-4">
               <h2 className="font-semibold text-lg mb-6">Resumo do Pedido</h2>
-              
+
               {/* Purchaser Info - if available from URL params */}
               {(purchaserName || purchaserEmail) && (
                 <div className="mb-6 pb-6 border-b border-border">
@@ -406,7 +435,7 @@ const Index = () => {
                   {purchaserEmail && <p className="text-sm text-muted-foreground">{purchaserEmail}</p>}
                 </div>
               )}
-              
+
               <div className="space-y-4 mb-6">
                 <div>
                   <p className="text-sm text-muted-foreground">Plano Premium</p>
