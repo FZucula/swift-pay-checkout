@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,8 @@ declare global {
   }
 }
 
+import { PurchaserInfoDialog } from "@/components/checkout/PurchaserInfoDialog";
+
 const Index = () => {
   const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("mpesa");
@@ -34,6 +37,7 @@ const Index = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [purchaserName, setPurchaserName] = useState("");
   const [purchaserEmail, setPurchaserEmail] = useState("");
+  const [showPurchaserDialog, setShowPurchaserDialog] = useState(false);
 
   // Carregar script do Mastercard Checkout
   useEffect(() => {
@@ -70,7 +74,8 @@ const Index = () => {
       console.log("Mastercard Checkout Complete:", response);
       savePayment({
         paymentId: response?.transaction?.id || "unknown",
-        amount: 6950, // Should be dynamic based on state ideally, but accessible here reference might be stale if closure issue. 
+        // amount: 6950, 
+        amount: 1, // Should be dynamic based on state ideally, but accessible here reference might be stale if closure issue. 
         // Better to use state or refs if possible, or just hardcode for this simple flow if amount is somewhat static or reachable.
         // Actually, `finalPrice` is calculated in render. 
         // Let's use a simpler approach or pass data via a global or something if needed, but for now let's assume valid.
@@ -96,11 +101,11 @@ const Index = () => {
     const firstName = searchParams.get("purchaser_first_name");
     const email = searchParams.get("purchaser_email");
 
-    if (firstName) {
+    if (firstName && email) {
       setPurchaserName(decodeURIComponent(firstName));
-    }
-    if (email) {
       setPurchaserEmail(decodeURIComponent(email));
+    } else {
+      setShowPurchaserDialog(true);
     }
   }, []);
 
@@ -207,6 +212,8 @@ const Index = () => {
         phoneNumber
       );
 
+      console.log(finalPrice, phoneNumber)
+
       if (result.success) {
         setPaymentSuccess(true);
         toast({
@@ -262,7 +269,8 @@ const Index = () => {
     }
   };
 
-  const totalPrice = 6950;
+  // const totalPrice = 6950;
+  const totalPrice = 1;
   const finalPrice = totalPrice - discount;
 
   return (
@@ -410,7 +418,7 @@ const Index = () => {
               ) : (
                 <>
                   <Shield className="w-5 h-5" />
-                  Pagar Agora — {finalPrice.toLocaleString('pt-MZ')} MZN
+                  Pagar Agora — {formatCurrency(finalPrice)} MZN
                 </>
               )}
             </Button>
@@ -439,39 +447,26 @@ const Index = () => {
               <div className="space-y-4 mb-6">
                 <div>
                   <p className="text-sm text-muted-foreground">Plano Premium</p>
-                  <p className="text-2xl font-bold">{totalPrice.toLocaleString('pt-MZ')} MZN</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalPrice)} MZN</p>
                   <p className="text-xs text-muted-foreground mt-1">Acesso ilimitado por 1 mês</p>
                 </div>
 
-                {discount > 0 && (
-                  <div className="pt-4 border-t border-border">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Desconto</span>
-                      <span className="text-sm font-medium text-green-500">-{discount.toLocaleString('pt-MZ')} MZN</span>
+                {
+                  discount > 0 && (
+                    <div className="pt-4 border-t border-border">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Desconto</span>
+                        <span className="text-sm font-medium text-green-500">-{formatCurrency(discount)} MZN</span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )
+                }
 
                 <div className="pt-4 border-t border-border">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Total</span>
-                    <span className="text-2xl font-bold text-primary">{finalPrice.toLocaleString('pt-MZ')} MZN</span>
+                    <span className="text-2xl font-bold text-primary">{formatCurrency(finalPrice)} MZN</span>
                   </div>
-                </div>
-              </div>
-
-              <div className="space-y-2 pt-6 border-t border-border">
-                <div className="flex items-start gap-2 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Acesso imediato</span>
-                </div>
-                <div className="flex items-start gap-2 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Sem compromisso</span>
-                </div>
-                <div className="flex items-start gap-2 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>Pode cancelar quando quiser</span>
                 </div>
               </div>
             </div>
@@ -485,6 +480,21 @@ const Index = () => {
           <p>© 2024 Makagui Experience. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      <PurchaserInfoDialog
+        open={showPurchaserDialog}
+        onSubmit={(data) => {
+          setPurchaserName(data.firstName);
+          setPurchaserEmail(data.email);
+          setShowPurchaserDialog(false);
+
+          // Update URL params
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.set("purchaser_first_name", data.firstName);
+          newUrl.searchParams.set("purchaser_email", data.email);
+          window.history.pushState({}, "", newUrl);
+        }}
+      />
     </div>
   );
 };

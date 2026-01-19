@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/utils";
 import { getPayments, PaymentDataWithId } from "@/services/paymentStorage";
 import {
     Table,
@@ -78,7 +79,7 @@ const Admin = () => {
                                         <Badge variant="outline">{payment.method}</Badge>
                                     </TableCell>
                                     <TableCell>
-                                        {payment.amount.toLocaleString("pt-MZ")} MZN
+                                        {formatCurrency(payment.amount)} MZN
                                     </TableCell>
                                     <TableCell>
                                         <Badge

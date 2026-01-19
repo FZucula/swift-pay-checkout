@@ -12,7 +12,7 @@ interface MpesaPaymentResponse {
   [key: string]: any;
 }
 
-const MPESA_API_ENDPOINT = import.meta.env.VITE_MPESA_API_ENDPOINT || 
+const MPESA_API_ENDPOINT = import.meta.env.VITE_MPESA_API_ENDPOINT ||
   "https://pagamentos.interactive.co.mz/api/pay/mpesa";
 
 /**
@@ -51,10 +51,10 @@ export async function processMpesaPayment(
       input_number: formattedNumber,
     };
 
-    console.log("Processando pagamento M-Pesa:", { 
-      amount, 
+    console.log("Processando pagamento M-Pesa:", {
+      amount,
       phoneNumber: formattedNumber,
-      endpoint: MPESA_API_ENDPOINT 
+      endpoint: MPESA_API_ENDPOINT
     });
 
     const response = await fetch(MPESA_API_ENDPOINT, {
@@ -71,8 +71,23 @@ export async function processMpesaPayment(
 
     const data = await response.json();
     console.log("Resposta da API M-Pesa:", data);
-    
-    return data;
+
+    // Verificar sucesso baseado no código de resposta
+    if (data.output_ResponseCode === "INS-0") {
+      return {
+        success: true,
+        message: data.output_ResponseDesc || "Pagamento iniciado com sucesso",
+        transaction_id: data.output_TransactionID,
+        reference: data.output_ThirdPartyReference,
+        ...data
+      };
+    } else {
+      return {
+        success: false,
+        message: data.output_ResponseDesc || "Falha no pagamento",
+        ...data
+      };
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("M-Pesa Payment Error:", errorMessage);
