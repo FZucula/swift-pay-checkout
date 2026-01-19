@@ -74,8 +74,8 @@ const Index = () => {
       console.log("Mastercard Checkout Complete:", response);
       savePayment({
         paymentId: response?.transaction?.id || "unknown",
-        // amount: 6950, 
-        amount: 1, // Should be dynamic based on state ideally, but accessible here reference might be stale if closure issue. 
+        amount: 6950,
+        // Should be dynamic based on state ideally, but accessible here reference might be stale if closure issue. 
         // Better to use state or refs if possible, or just hardcode for this simple flow if amount is somewhat static or reachable.
         // Actually, `finalPrice` is calculated in render. 
         // Let's use a simpler approach or pass data via a global or something if needed, but for now let's assume valid.
@@ -231,6 +231,26 @@ const Index = () => {
           details: result
         });
 
+        const paymentData = {
+          paymentId: result.transaction_id || `mpesa_${Date.now()}`,
+          amount: finalPrice,
+          method: "mpesa",
+          status: "success",
+          phoneNumber: phoneNumber,
+          details: result,
+          name: purchaserName,
+          email: purchaserEmail
+        };
+
+        // Post name, email and phoneNumber to backend
+        await fetch("https://soico.app.n8n.cloud/webhook/webhook/payment-success", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentData),
+        });
+
         // Limpar formulário após sucesso
         setTimeout(() => {
           setPhoneNumber("");
@@ -269,8 +289,7 @@ const Index = () => {
     }
   };
 
-  // const totalPrice = 6950;
-  const totalPrice = 1;
+  const totalPrice = 6950;
   const finalPrice = totalPrice - discount;
 
   return (
