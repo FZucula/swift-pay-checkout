@@ -72,7 +72,7 @@ const Index = () => {
 
     (window as any).handleCheckoutComplete = (response: any) => {
       console.log("Mastercard Checkout Complete:", response);
-      savePayment({
+      /*savePayment({
         paymentId: response?.transaction?.id || "unknown",
         amount: 6950,
         // Should be dynamic based on state ideally, but accessible here reference might be stale if closure issue. 
@@ -84,8 +84,8 @@ const Index = () => {
         method: "mastercard",
         status: "success",
         details: response
-      });
-      setPaymentSuccess(true);
+      }); */
+      // setPaymentSuccess(true);
     };
 
     return () => {
@@ -171,6 +171,10 @@ const Index = () => {
         setIsSubmitting(false);
         return;
       }
+
+      // Add purchaserName and purchaserEmail to localStorage
+      localStorage.setItem("purchaserName", purchaserName);
+      localStorage.setItem("purchaserEmail", purchaserEmail);
 
       // Configurar e mostrar o Checkout do Mastercard (popup)
       if (window.Checkout && result.checkout_config) {

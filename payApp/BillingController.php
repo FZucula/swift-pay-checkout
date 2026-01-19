@@ -296,7 +296,7 @@ class BillingController extends Controller
                     $this->isRetryableError($errorCode)
                 );
             }
-
+ 
             // Preparar dados da sessão
             $sessionData = [
                 'successIndicator' => $result['successIndicator'],

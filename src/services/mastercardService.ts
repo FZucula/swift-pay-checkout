@@ -70,10 +70,10 @@ export async function initiateMastercardPayment(
   try {
     // Obter token da API do Mastercard
     const apiToken = import.meta.env.VITE_MASTERCARD_API_TOKEN;
-    
+
     if (!apiToken || apiToken === "your_mastercard_token_here") {
       console.warn("Token do Mastercard não configurado. Use VITE_MASTERCARD_API_TOKEN no .env");
-      
+
       // Retornar configuração de teste para desenvolvimento
       return {
         success: true,
@@ -138,6 +138,9 @@ export async function initiateMastercardPayment(
         retryable: false,
       };
     }
+
+    // guardar na memoria do navegador 
+    localStorage.setItem("successIndicator", data.successIndicator);
 
     return {
       success: true,

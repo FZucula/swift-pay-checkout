@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import MastercardCallback from "./pages/MastercardCallback";
+import Success from "./pages/Success";
 import NotFound from "./pages/NotFound";
 
 import Admin from "./pages/Admin";
@@ -37,7 +37,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route path="/mastercard" element={<MastercardCallback />} />
+            <Route path="/mastercard" element={<Success />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
