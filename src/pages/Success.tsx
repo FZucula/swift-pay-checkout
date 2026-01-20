@@ -42,7 +42,7 @@ const Success = () => {
             setStatus("error");
             setMessage("Indicador de resultado não encontrado");
             setDetails("Não foi possível determinar o status do pagamento");
-            // localStorage.clear();
+            localStorage.clear();
             return;
         } else if (resultIndicator === storedSuccessIndicator) {
             setStatus("success");
@@ -70,13 +70,13 @@ const Success = () => {
                 body: JSON.stringify(paymentData),
             });
 
-            //localStorage.clear();
+            localStorage.clear();
             return;
         } else {
             setStatus("error");
             setMessage("Indicador de resultado não encontrado");
             setDetails("Não foi possível determinar o status do pagamento");
-            // localStorage.clear();
+            localStorage.clear();
             return;
         }
 
@@ -229,6 +229,8 @@ const Success = () => {
                     </div>
 
                     {/* Support Info */}
+
+                    {/*
                     <div className="bg-card/50 border border-border/50 rounded-lg p-6 text-center text-sm text-muted-foreground">
                         <p>
                             Tem dúvidas sobre o seu pagamento?{" "}
@@ -237,6 +239,9 @@ const Success = () => {
                             </a>
                         </p>
                     </div>
+
+                    */}
+
 
                     {/* Security Badge */}
                     <div className="text-center text-xs text-muted-foreground">
