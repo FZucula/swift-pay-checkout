@@ -469,9 +469,9 @@ const Index = () => {
 
               <div className="space-y-4 mb-6">
                 <div>
-                  <p className="text-sm text-muted-foreground">Plano Premium</p>
+                  {/* <p className="text-sm text-muted-foreground">Plano Premium</p> */}
                   <p className="text-2xl font-bold">{formatCurrency(totalPrice)} MZN</p>
-                  <p className="text-xs text-muted-foreground mt-1">Acesso ilimitado por 1 mês</p>
+                  {/* <p className="text-xs text-muted-foreground mt-1">Acesso ilimitado por 1 mês</p> */}
                 </div>
 
                 {

@@ -85,7 +85,7 @@ export async function initiateMastercardPayment(
           },
           interaction: {
             merchant: {
-              name: "STV Play",
+              name: "Makagui Experience",
               address: {
                 line1: "Maputo",
                 line2: "Katembe",
@@ -152,7 +152,7 @@ export async function initiateMastercardPayment(
         },
         interaction: {
           merchant: {
-            name: "STV Play",
+            name: "Makagui Experience",
             address: {
               line1: "Maputo",
               line2: "Katembe",

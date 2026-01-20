@@ -158,7 +158,7 @@ if (result.success) {
     "merchant": 15413,
     "interaction": {
       "merchant": {
-        "name": "STV Play",
+        "name": "Makagui Experience",
         "address": {
           "line1": "Maputo",
           "line2": "Katembe"
